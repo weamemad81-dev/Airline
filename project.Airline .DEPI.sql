@@ -1,4 +1,3 @@
-DROP DATABASE IF EXISTS AirlineDB;
 CREATE DATABASE AirlineDB;
 USE AirlineDB;
  
@@ -223,35 +222,15 @@ INSERT INTO Flight
 (Flight_No, Departure_Time, Arrival_Time, Duration,
  Airline_ID, Aircraft_ID, Departure_Airport_ID, Arrival_Airport_ID)
 VALUES
-('MS101',
- '2026-08-01 08:00:00',
- '2026-08-01 10:30:00',
- '2h 30m',
- 1, 1, 1, 2),
+('MS101','2026-08-01 08:00:00','2026-08-01 10:30:00','2h 30m',1, 1, 1, 2),
 
-('TK404',
- '2026-08-05 09:00:00',
- '2026-08-05 12:30:00',
- '3h 30m',
- 3, 5, 3, 1),
+('TK404', '2026-08-05 09:00:00', '2026-08-05 12:30:00','3h 30m', 3, 5, 3, 1),
 
-('LH505',
- '2026-08-06 14:00:00',
- '2026-08-06 18:00:00',
- '4h',
- 4, 3, 4, 1),
+('LH505', '2026-08-06 14:00:00', '2026-08-06 18:00:00','4h',4, 3, 4, 1),
 
-('QR202',
- '2026-08-02 09:00:00',
- '2026-08-02 11:00:00',
- '2h',
- 2, 2, 2, 3),
+('QR202', '2026-08-02 09:00:00','2026-08-02 11:00:00','2h',2, 2, 2, 3),
 
-('EK303',
- '2026-08-03 07:00:00',
- '2026-08-03 10:30:00',
- '3h 30m',
- 5, 4, 5, 1);
+('EK303','2026-08-03 07:00:00','2026-08-03 10:30:00','3h 30m',5, 4, 5, 1);
 
 
 INSERT INTO Passenger
@@ -421,8 +400,6 @@ RIGHT JOIN Seat
 
 
 
-DROP FUNCTION IF EXISTS CheckEvenOdd;
-
 DELIMITER //
 
 CREATE FUNCTION CheckEvenOdd(NumberValue INT)
@@ -442,8 +419,6 @@ DELIMITER ;
 SELECT CheckEvenOdd(10) AS Result;
 SELECT CheckEvenOdd(7) AS Result;
 
-
-DROP FUNCTION IF EXISTS GetPassengerBookings;
 
 DELIMITER //
 
@@ -470,8 +445,6 @@ SELECT
 FROM Passenger;
 
 
-DROP FUNCTION IF EXISTS GetTicketPrice;
-
 DELIMITER //
 
 CREATE FUNCTION GetTicketPrice(TicketID INT)
@@ -496,8 +469,6 @@ SELECT
     GetTicketPrice(Ticket_ID) AS Price
 FROM Ticket;
 
-
-DROP FUNCTION IF EXISTS GetPassengerName;
 
 DELIMITER //
 
@@ -524,9 +495,6 @@ SELECT
 FROM Booking;
 
 
-
-DROP PROCEDURE IF EXISTS ShowPassengerBookings;
-
 DELIMITER //
 
 CREATE PROCEDURE ShowPassengerBookings()
@@ -545,8 +513,6 @@ DELIMITER ;
 
 CALL ShowPassengerBookings();
 
-
-DROP PROCEDURE IF EXISTS UpdateTicketPrice;
 
 DELIMITER //
 
@@ -570,9 +536,6 @@ FROM Ticket
 WHERE Ticket_ID = 1;
 
 
-
-DROP VIEW IF EXISTS PassengerBookingInfo;
-
 CREATE VIEW PassengerBookingInfo AS
 SELECT
     Passenger.Passenger_ID,
@@ -592,8 +555,6 @@ SELECT *
 FROM PassengerBookingInfo;
 
 
-DROP VIEW IF EXISTS AirlineBookingCount;
-
 CREATE VIEW AirlineBookingCount AS
 SELECT
     Airline.Airline_Name,
@@ -609,8 +570,6 @@ GROUP BY Airline.Airline_ID, Airline.Airline_Name;
 SELECT *
 FROM AirlineBookingCount;
 
-
-DROP VIEW IF EXISTS MaxBookingAirline;
 
 CREATE VIEW MaxBookingAirline AS
 SELECT
@@ -722,8 +681,6 @@ CREATE TABLE Ticket_Audit (
 
 
 
-DROP TRIGGER IF EXISTS AfterTicketUpdate;
-
 DELIMITER //
 
 CREATE TRIGGER AfterTicketUpdate
@@ -751,8 +708,6 @@ FROM Ticket_Audit;
 
 
 
-DROP TRIGGER IF EXISTS PreventEmployeeDelete;
-
 DELIMITER //
 
 CREATE TRIGGER PreventEmployeeDelete
@@ -767,8 +722,6 @@ END //
 DELIMITER ;
 
 
-
-DROP TRIGGER IF EXISTS PreventNegativeSalary;
 
 DELIMITER //
 
@@ -800,8 +753,6 @@ SHOW INDEX FROM Ticket;
 SHOW INDEX FROM Employees;
 
 
-
--- Valid INSERT: Passenger_ID 5 and Flight_ID 1 both exist
 
 INSERT INTO Booking
 (Booking_Date, Status, Passenger_ID, Flight_ID)
