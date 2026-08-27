@@ -1,0 +1,868 @@
+DROP DATABASE IF EXISTS AirlineDB;
+CREATE DATABASE AirlineDB;
+USE AirlineDB;
+ 
+ 
+CREATE TABLE Airline (
+    Airline_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Airline_Name VARCHAR(100),
+    Country VARCHAR(50)
+);
+
+
+CREATE TABLE Airport (
+    Airport_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Airport_Name VARCHAR(100),
+    Country VARCHAR(50)
+);
+
+
+CREATE TABLE Aircraft (
+    Aircraft_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Model VARCHAR(100),
+    Capacity INT NOT NULL,
+    Airline_ID INT,
+
+    FOREIGN KEY (Airline_ID)
+        REFERENCES Airline(Airline_ID)
+);
+
+
+CREATE TABLE Flight (
+    Flight_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Flight_No VARCHAR(15),
+    Departure_Time DATETIME,
+    Arrival_Time DATETIME,
+    Duration VARCHAR(50),
+    Airline_ID INT,
+    Aircraft_ID INT,
+    Departure_Airport_ID INT,
+    Arrival_Airport_ID INT,
+
+    FOREIGN KEY (Airline_ID)
+        REFERENCES Airline(Airline_ID),
+
+    FOREIGN KEY (Aircraft_ID)
+        REFERENCES Aircraft(Aircraft_ID),
+
+    FOREIGN KEY (Departure_Airport_ID)
+        REFERENCES Airport(Airport_ID),
+
+    FOREIGN KEY (Arrival_Airport_ID)
+        REFERENCES Airport(Airport_ID)
+);
+
+
+CREATE TABLE Passenger (
+    Passenger_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Full_Name VARCHAR(100),
+    Gender VARCHAR(50),
+    Email VARCHAR(100),
+    Birthday_Date DATE,
+    Phone VARCHAR(20)
+);
+
+
+CREATE TABLE Passport (
+    Passport_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Nationality VARCHAR(100),
+    Expiry_Date DATE,
+    Issue_Date DATE,
+    Passenger_ID INT UNIQUE,
+
+    FOREIGN KEY (Passenger_ID)
+        REFERENCES Passenger(Passenger_ID)
+);
+
+
+CREATE TABLE Booking (
+    Booking_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Booking_Date DATETIME,
+    Status VARCHAR(20),
+    Passenger_ID INT,
+    Flight_ID INT,
+
+    FOREIGN KEY (Passenger_ID)
+        REFERENCES Passenger(Passenger_ID),
+
+    FOREIGN KEY (Flight_ID)
+        REFERENCES Flight(Flight_ID)
+);
+
+
+CREATE TABLE Payment (
+    Payment_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Payment_Date DATE,
+    Method VARCHAR(50),
+    Transaction_No VARCHAR(50),
+    Booking_ID INT,
+
+    FOREIGN KEY (Booking_ID)
+        REFERENCES Booking(Booking_ID)
+);
+
+
+CREATE TABLE Flight_Class (
+    Class_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Seat_Type VARCHAR(50)
+);
+
+
+CREATE TABLE Seat (
+    Seats_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Seat_Type VARCHAR(50),
+    Aircraft_ID INT,
+    Class_ID INT,
+
+    FOREIGN KEY (Aircraft_ID)
+        REFERENCES Aircraft(Aircraft_ID),
+
+    FOREIGN KEY (Class_ID)
+        REFERENCES Flight_Class(Class_ID)
+);
+
+
+CREATE TABLE Ticket (
+    Ticket_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Ticket_No VARCHAR(50),
+    Price INT,
+    Issue_Date DATE,
+    Booking_ID INT,
+    Seat_ID INT,
+
+    FOREIGN KEY (Booking_ID)
+        REFERENCES Booking(Booking_ID),
+
+    FOREIGN KEY (Seat_ID)
+        REFERENCES Seat(Seats_ID)
+);
+
+
+CREATE TABLE Boarding_Pass (
+    BP_ID INT PRIMARY KEY AUTO_INCREMENT,
+    BP_Time TIME,
+    BP_No VARCHAR(50),
+    Ticket_ID INT,
+
+    FOREIGN KEY (Ticket_ID)
+        REFERENCES Ticket(Ticket_ID)
+);
+
+
+CREATE TABLE Check_In (
+    CheckIn_ID INT PRIMARY KEY AUTO_INCREMENT,
+    CheckIn_Time TIME,
+    CheckIn_Country VARCHAR(100),
+    Passenger_ID INT,
+    Flight_ID INT,
+
+    FOREIGN KEY (Passenger_ID)
+        REFERENCES Passenger(Passenger_ID),
+
+    FOREIGN KEY (Flight_ID)
+        REFERENCES Flight(Flight_ID)
+);
+
+
+CREATE TABLE Baggage (
+    Baggage_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Weight DECIMAL(5,2),
+    Tag_No VARCHAR(50),
+    Baggage_Type VARCHAR(50),
+    Passenger_ID INT,
+
+    FOREIGN KEY (Passenger_ID)
+        REFERENCES Passenger(Passenger_ID)
+);
+
+
+CREATE TABLE Employees (
+    Employee_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100),
+    Position VARCHAR(50),
+    Salary INT,
+    Phone VARCHAR(20),
+    Airline_ID INT,
+
+    FOREIGN KEY (Airline_ID)
+        REFERENCES Airline(Airline_ID)
+);
+
+
+INSERT INTO Airline
+(Airline_Name, Country)
+VALUES
+('EgyptAir', 'Egypt'),
+('Qatar Airways', 'Qatar'),
+('Turkish Airlines', 'Turkey'),
+('Lufthansa', 'Germany'),
+('Emirates', 'UAE');
+
+
+INSERT INTO Airport
+(Airport_Name, Country)
+VALUES
+('Cairo International Airport', 'Egypt'),
+('Hamad International Airport', 'Qatar'),
+('Istanbul Airport', 'Turkey'),
+('Frankfurt Airport', 'Germany'),
+('Dubai International Airport', 'UAE');
+
+
+INSERT INTO Aircraft
+(Model, Capacity, Airline_ID)
+VALUES
+('Boeing 737', 180, 1),
+('Airbus A320', 170, 2),
+('Airbus A350', 320, 4),
+('Boeing 787 Dreamliner', 290, 5),
+('Boeing 777', 350, 3);
+
+
+INSERT INTO Flight
+(Flight_No, Departure_Time, Arrival_Time, Duration,
+ Airline_ID, Aircraft_ID, Departure_Airport_ID, Arrival_Airport_ID)
+VALUES
+('MS101',
+ '2026-08-01 08:00:00',
+ '2026-08-01 10:30:00',
+ '2h 30m',
+ 1, 1, 1, 2),
+
+('TK404',
+ '2026-08-05 09:00:00',
+ '2026-08-05 12:30:00',
+ '3h 30m',
+ 3, 5, 3, 1),
+
+('LH505',
+ '2026-08-06 14:00:00',
+ '2026-08-06 18:00:00',
+ '4h',
+ 4, 3, 4, 1),
+
+('QR202',
+ '2026-08-02 09:00:00',
+ '2026-08-02 11:00:00',
+ '2h',
+ 2, 2, 2, 3),
+
+('EK303',
+ '2026-08-03 07:00:00',
+ '2026-08-03 10:30:00',
+ '3h 30m',
+ 5, 4, 5, 1);
+
+
+INSERT INTO Passenger
+(Full_Name, Gender, Email, Birthday_Date, Phone)
+VALUES
+('Ahmed Ali', 'Male', 'ahmed@gmail.com', '2000-05-12', '01011111111'),
+('Sara Mohamed', 'Female', 'sara@gmail.com', '1999-09-21', '01122222222'),
+('Omar Hassan', 'Male', 'omar@gmail.com', '2001-01-10', '01233333333'),
+('Mona Ibrahim', 'Female', 'mona@gmail.com', '1998-07-15', '01044444444'),
+('Youssef Samy', 'Male', 'youssef@gmail.com', '1997-11-20', '01155555555');
+
+
+INSERT INTO Passport
+(Nationality, Expiry_Date, Issue_Date, Passenger_ID)
+VALUES
+('Egyptian', '2032-01-01', '2022-01-01', 1),
+('Egyptian', '2031-06-15', '2021-06-15', 2),
+('Egyptian', '2033-03-20', '2023-03-20', 3),
+('Egyptian', '2034-05-01', '2024-05-01', 4),
+('Egyptian', '2035-08-15', '2025-08-15', 5);
+
+
+INSERT INTO Booking
+(Booking_Date, Status, Passenger_ID, Flight_ID)
+VALUES
+('2026-07-20 12:00:00', 'Confirmed', 1, 1),
+('2026-07-21 15:30:00', 'Confirmed', 2, 2),
+('2026-07-22 10:45:00', 'Pending', 3, 3),
+('2026-07-24 13:00:00', 'Confirmed', 4, 4),
+('2026-07-25 16:45:00', 'Cancelled', 5, 5);
+
+
+INSERT INTO Payment
+(Payment_Date, Method, Transaction_No, Booking_ID)
+VALUES
+('2026-07-20', 'Credit Card', 'TRX1001', 1),
+('2026-07-21', 'Cash', 'TRX1002', 2),
+('2026-07-22', 'Visa', 'TRX1003', 3),
+('2026-07-24', 'Master Card', 'TRX1004', 4),
+('2026-07-25', 'Cash', 'TRX1005', 5);
+
+
+INSERT INTO Flight_Class
+(Seat_Type)
+VALUES
+('Economy'),
+('Business'),
+('First Class'),
+('Premium Economy'),
+('VIP');
+
+
+INSERT INTO Seat
+(Seat_Type, Aircraft_ID, Class_ID)
+VALUES
+('12A', 1, 1),
+('2B', 2, 2),
+('1A', 3, 3),
+('15C', 4, 4),
+('3A', 5, 5);
+
+
+INSERT INTO Ticket
+(Ticket_No, Price, Issue_Date, Booking_ID, Seat_ID)
+VALUES
+('T1001', 2500, '2026-07-20', 1, 1),
+('T1002', 4500, '2026-07-21', 2, 2),
+('T1003', 7000, '2026-07-22', 3, 3),
+('T1004', 3200, '2026-07-24', 4, 4),
+('T1005', 5800, '2026-07-25', 5, 5);
+
+
+INSERT INTO Boarding_Pass
+(BP_Time, BP_No, Ticket_ID)
+VALUES
+('07:15:00', 'BP001', 1),
+('08:15:00', 'BP002', 2),
+('06:15:00', 'BP003', 3),
+('08:15:00', 'BP004', 4),
+('13:15:00', 'BP005', 5);
+
+
+INSERT INTO Check_In
+(CheckIn_Time, CheckIn_Country, Passenger_ID, Flight_ID)
+VALUES
+('06:30:00', 'Egypt', 1, 1),
+('07:30:00', 'Qatar', 2, 2),
+('05:45:00', 'UAE', 3, 3),
+('07:30:00', 'Turkey', 4, 4),
+('12:30:00', 'Germany', 5, 5);
+
+
+INSERT INTO Baggage
+(Weight, Tag_No, Baggage_Type, Passenger_ID)
+VALUES
+(20.50, 'BG1001', 'Checked', 1),
+(15.00, 'BG1002', 'Cabin', 2),
+(25.75, 'BG1003', 'Checked', 3),
+(18.25, 'BG1004', 'Checked', 4),
+(10.50, 'BG1005', 'Cabin', 5);
+
+
+INSERT INTO Employees
+(Name, Position, Salary, Phone, Airline_ID)
+VALUES
+('Mohamed Adel', 'Pilot', 30000, '01012345678', 1),
+('Nour Ahmed', 'Cabin Crew', 15000, '01123456789', 2),
+('Ali Mahmoud', 'Engineer', 20000, '01234567890', 3),
+('Fatma Hassan', 'Ground Staff', 12000, '01098765432', 4),
+('Khaled Amin', 'Pilot', 35000, '01187654321', 5);
+
+
+
+SELECT *
+FROM Ticket
+WHERE Price > 4500
+ORDER BY Price DESC;
+
+
+SELECT
+    Position,
+    AVG(Salary) AS Average_Salary
+FROM Employees
+WHERE Salary >= 15000
+GROUP BY Position
+HAVING AVG(Salary) > 20000;
+
+
+SELECT
+    Airline_ID,
+    AVG(Capacity) AS Avg_Capacity
+FROM Aircraft
+WHERE Capacity > 150
+GROUP BY Airline_ID
+HAVING AVG(Capacity) > 250;
+
+
+SELECT
+    Method,
+    COUNT(Payment_ID) AS Total_Payments
+FROM Payment
+GROUP BY Method;
+
+
+SELECT
+    Passenger.Full_Name,
+    Booking.Booking_ID
+FROM Passenger
+INNER JOIN Booking
+    ON Passenger.Passenger_ID = Booking.Passenger_ID;
+
+
+SELECT
+    Airline.Airline_Name,
+    Aircraft.Model
+FROM Airline
+RIGHT JOIN Aircraft
+    ON Airline.Airline_ID = Aircraft.Airline_ID;
+
+
+SELECT
+    Flight_Class.Class_ID,
+    Seat.Seat_Type
+FROM Flight_Class
+RIGHT JOIN Seat
+    ON Flight_Class.Class_ID = Seat.Class_ID;
+
+
+
+DROP FUNCTION IF EXISTS CheckEvenOdd;
+
+DELIMITER //
+
+CREATE FUNCTION CheckEvenOdd(NumberValue INT)
+RETURNS VARCHAR(10)
+DETERMINISTIC
+BEGIN
+    IF NumberValue % 2 = 0 THEN
+        RETURN 'Even';
+    ELSE
+        RETURN 'Odd';
+    END IF;
+END //
+
+DELIMITER ;
+
+
+SELECT CheckEvenOdd(10) AS Result;
+SELECT CheckEvenOdd(7) AS Result;
+
+
+DROP FUNCTION IF EXISTS GetPassengerBookings;
+
+DELIMITER //
+
+CREATE FUNCTION GetPassengerBookings(PassengerID INT)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE BookingCount INT;
+
+    SELECT COUNT(*)
+    INTO BookingCount
+    FROM Booking
+    WHERE Booking.Passenger_ID = PassengerID;
+
+    RETURN BookingCount;
+END //
+
+DELIMITER ;
+
+
+SELECT
+    Full_Name,
+    GetPassengerBookings(Passenger_ID) AS Number_Of_Bookings
+FROM Passenger;
+
+
+DROP FUNCTION IF EXISTS GetTicketPrice;
+
+DELIMITER //
+
+CREATE FUNCTION GetTicketPrice(TicketID INT)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE TicketPrice INT;
+
+    SELECT Price
+    INTO TicketPrice
+    FROM Ticket
+    WHERE Ticket_ID = TicketID;
+
+    RETURN TicketPrice;
+END //
+
+DELIMITER ;
+
+
+SELECT
+    Ticket_No,
+    GetTicketPrice(Ticket_ID) AS Price
+FROM Ticket;
+
+
+DROP FUNCTION IF EXISTS GetPassengerName;
+
+DELIMITER //
+
+CREATE FUNCTION GetPassengerName(PassengerID INT)
+RETURNS VARCHAR(100)
+DETERMINISTIC
+BEGIN
+    DECLARE PassengerName VARCHAR(100);
+
+    SELECT Full_Name
+    INTO PassengerName
+    FROM Passenger
+    WHERE Passenger_ID = PassengerID;
+
+    RETURN PassengerName;
+END //
+
+DELIMITER ;
+
+
+SELECT
+    Booking_ID,
+    GetPassengerName(Passenger_ID) AS Passenger_Name
+FROM Booking;
+
+
+
+DROP PROCEDURE IF EXISTS ShowPassengerBookings;
+
+DELIMITER //
+
+CREATE PROCEDURE ShowPassengerBookings()
+BEGIN
+    SELECT
+        Passenger.Full_Name,
+        COUNT(Booking.Booking_ID) AS Number_Of_Bookings
+    FROM Passenger
+    LEFT JOIN Booking
+        ON Passenger.Passenger_ID = Booking.Passenger_ID
+    GROUP BY Passenger.Passenger_ID, Passenger.Full_Name;
+END //
+
+DELIMITER ;
+
+
+CALL ShowPassengerBookings();
+
+
+DROP PROCEDURE IF EXISTS UpdateTicketPrice;
+
+DELIMITER //
+
+CREATE PROCEDURE UpdateTicketPrice(
+    IN TicketID INT,
+    IN NewPrice INT
+)
+BEGIN
+    UPDATE Ticket
+    SET Price = NewPrice
+    WHERE Ticket_ID = TicketID;
+END //
+
+DELIMITER ;
+
+
+CALL UpdateTicketPrice(1, 3000);
+
+SELECT *
+FROM Ticket
+WHERE Ticket_ID = 1;
+
+
+
+DROP VIEW IF EXISTS PassengerBookingInfo;
+
+CREATE VIEW PassengerBookingInfo AS
+SELECT
+    Passenger.Passenger_ID,
+    Passenger.Full_Name,
+    Booking.Booking_ID,
+    Booking.Booking_Date,
+    Booking.Status,
+    Flight.Flight_No
+FROM Passenger
+INNER JOIN Booking
+    ON Passenger.Passenger_ID = Booking.Passenger_ID
+INNER JOIN Flight
+    ON Booking.Flight_ID = Flight.Flight_ID;
+
+
+SELECT *
+FROM PassengerBookingInfo;
+
+
+DROP VIEW IF EXISTS AirlineBookingCount;
+
+CREATE VIEW AirlineBookingCount AS
+SELECT
+    Airline.Airline_Name,
+    COUNT(Booking.Booking_ID) AS Number_Of_Bookings
+FROM Airline
+LEFT JOIN Flight
+    ON Airline.Airline_ID = Flight.Airline_ID
+LEFT JOIN Booking
+    ON Flight.Flight_ID = Booking.Flight_ID
+GROUP BY Airline.Airline_ID, Airline.Airline_Name;
+
+
+SELECT *
+FROM AirlineBookingCount;
+
+
+DROP VIEW IF EXISTS MaxBookingAirline;
+
+CREATE VIEW MaxBookingAirline AS
+SELECT
+    Airline_Name,
+    Number_Of_Bookings
+FROM AirlineBookingCount
+WHERE Number_Of_Bookings = (
+    SELECT MAX(Number_Of_Bookings)
+    FROM AirlineBookingCount
+);
+
+
+SELECT *
+FROM MaxBookingAirline;
+
+
+
+SELECT
+    Passenger_ID,
+    Full_Name
+FROM Passenger
+WHERE Passenger_ID IN (
+    SELECT Passenger_ID
+    FROM Booking
+    GROUP BY Passenger_ID
+    HAVING COUNT(*) = (
+        SELECT MAX(BookingCount)
+        FROM (
+            SELECT COUNT(*) AS BookingCount
+            FROM Booking
+            GROUP BY Passenger_ID
+        ) AS B
+    )
+);
+
+
+
+SELECT
+    MAX(Price) AS Maximum_Price,
+    MIN(Price) AS Minimum_Price
+FROM Ticket;
+
+
+SELECT
+    Passenger.Full_Name,
+    SUM(Ticket.Price) AS Total_Paid
+FROM Passenger
+INNER JOIN Booking
+    ON Passenger.Passenger_ID = Booking.Passenger_ID
+INNER JOIN Ticket
+    ON Booking.Booking_ID = Ticket.Booking_ID
+GROUP BY Passenger.Passenger_ID, Passenger.Full_Name;
+
+
+
+SELECT
+    Flight_No,
+    Duration,
+    CASE
+        WHEN Duration LIKE '2h%' THEN 'Short Flight'
+        WHEN Duration LIKE '3h%' THEN 'Medium Flight'
+        ELSE 'Long Flight'
+    END AS Flight_Type
+FROM Flight;
+
+
+SELECT
+    Name,
+    COALESCE(Phone, 'No Phone Number') AS Phone_Number
+FROM Employees;
+
+
+SELECT
+    Full_Name,
+    TIMESTAMPDIFF(
+        YEAR,
+        Birthday_Date,
+        CURDATE()
+    ) AS Age
+FROM Passenger;
+
+
+SELECT
+    Flight_No,
+    DATE_FORMAT(
+        Departure_Time,
+        '%d/%m/%Y %H:%i'
+    ) AS Formatted_Departure
+FROM Flight;
+
+
+SELECT
+    Ticket_No,
+    DATE_FORMAT(
+        Issue_Date,
+        '%M %d, %Y'
+    ) AS Formatted_Date
+FROM Ticket;
+
+
+
+CREATE TABLE Ticket_Audit (
+    Audit_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Ticket_ID INT,
+    Old_Price INT,
+    New_Price INT,
+    Change_Date DATETIME
+);
+
+
+
+DROP TRIGGER IF EXISTS AfterTicketUpdate;
+
+DELIMITER //
+
+CREATE TRIGGER AfterTicketUpdate
+AFTER UPDATE ON Ticket
+FOR EACH ROW
+BEGIN
+    IF OLD.Price <> NEW.Price THEN
+        INSERT INTO Ticket_Audit
+        (Ticket_ID, Old_Price, New_Price, Change_Date)
+        VALUES
+        (OLD.Ticket_ID, OLD.Price, NEW.Price, NOW());
+    END IF;
+END //
+
+DELIMITER ;
+
+
+UPDATE Ticket
+SET Price = 3500
+WHERE Ticket_ID = 1;
+
+
+SELECT *
+FROM Ticket_Audit;
+
+
+
+DROP TRIGGER IF EXISTS PreventEmployeeDelete;
+
+DELIMITER //
+
+CREATE TRIGGER PreventEmployeeDelete
+BEFORE DELETE ON Employees
+FOR EACH ROW
+BEGIN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT =
+    'You cannot delete an employee from this table';
+END //
+
+DELIMITER ;
+
+
+
+DROP TRIGGER IF EXISTS PreventNegativeSalary;
+
+DELIMITER //
+
+CREATE TRIGGER PreventNegativeSalary
+BEFORE INSERT ON Employees
+FOR EACH ROW
+BEGIN
+    IF NEW.Salary < 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT =
+        'Salary cannot be negative';
+    END IF;
+END //
+
+DELIMITER ;
+
+
+
+CREATE INDEX idx_ticket_price
+ON Ticket(Price);
+
+
+CREATE INDEX idx_employee_salary
+ON Employees(Salary);
+
+
+SHOW INDEX FROM Ticket;
+
+SHOW INDEX FROM Employees;
+
+
+
+-- Valid INSERT: Passenger_ID 5 and Flight_ID 1 both exist
+
+INSERT INTO Booking
+(Booking_Date, Status, Passenger_ID, Flight_ID)
+VALUES
+(NOW(), 'Confirmed', 5, 1);
+
+
+
+ DELETE FROM Passenger
+ WHERE Passenger_ID = 1;
+
+ DELETE FROM Airline
+ WHERE Airline_ID = 1;
+
+
+
+CREATE USER IF NOT EXISTS
+'airline_user'@'localhost'
+IDENTIFIED BY 'Airline123';
+
+
+GRANT SELECT, INSERT
+ON AirlineDB.Employees
+TO 'airline_user'@'localhost';
+
+
+GRANT SELECT, INSERT
+ON AirlineDB.Flight
+TO 'airline_user'@'localhost';
+
+
+FLUSH PRIVILEGES;
+
+
+SHOW GRANTS
+FOR 'airline_user'@'localhost';
+
+
+SELECT *
+FROM PassengerBookingInfo;
+
+
+SELECT *
+FROM AirlineBookingCount;
+
+
+SELECT *
+FROM MaxBookingAirline;
+
+
+SELECT *
+FROM Ticket_Audit;
+
+
+SELECT *
+FROM Employees;
+
+
+SELECT *
+FROM Ticket;
+
+
+SELECT *
+FROM Booking;
